@@ -72,14 +72,14 @@ class Frenet(object):
 
         elif possible_change_direction == 'left':
             # self.DF_SET = np.array([-0.3 * self.LANE_WIDTH, 0.0, self.LANE_WIDTH])
-            self.DF_SET = np.array([-0.05 * self.LANE_WIDTH, 0.0, self.LANE_WIDTH * 0.6, self.LANE_WIDTH*1.0])
+            self.DF_SET = np.array([-0.05 * self.LANE_WIDTH, 0.0, self.LANE_WIDTH * 1.0, self.LANE_WIDTH*1.2])
             self.DDF_SET = [0.0]
             self.max_ob_radius = 2.0
             self.min_ob_radius = 0.5
 
-            self.MAX_SF = 12.0
-            self.MIN_SF = 6.0
-            self.DS = 3.0
+            self.MAX_SF = 20.0
+            self.MIN_SF = 12.0
+            self.DS = 12.0
 
             # self.MAX_SF = 20.0
             # self.MIN_SF = 4.0
@@ -91,8 +91,8 @@ class Frenet(object):
             self.max_ob_radius = 2.0
             self.min_ob_radius = 1.0
             self.MAX_SF = 20.0
-            self.MIN_SF = 4.0
-            self.DS = 6.0
+            self.MIN_SF = 6.0
+            self.DS = 12.0
 
         else: # 같은 차선 내
             self.DF_SET = np.array([-self.LANE_WIDTH * 0.20,  0.0, 

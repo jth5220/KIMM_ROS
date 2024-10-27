@@ -20,7 +20,7 @@ from path_finder.delivery import Delivery
 from path_finder.normal import Normal
 
 # =============================================
-ROBOT_RADIUS = 1.8 # [m]
+ROBOT_RADIUS = 2.3 # [m]
 LANE_WIDTH = 3.6 # [m]
 
 class OptimalFrenetPlanning():

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from control.stanley import Stanley
+from control.stanley_kimm import Stanley
 from control.longitunial_control import RiseTimeImprovement
 
 import rospy
@@ -55,7 +55,7 @@ class PathTracking():
         # self.controller = Stanley(k=0.8, ks=0.5, kd=0, L=0.7,
         #                            k_long=3.0, scaling_factor=0.5, max_speed=4.0, min_speed=2.5)
         
-        self.controller = Stanley(k=1.0, ks=0.5, kd=0, L=1.3,
+        self.controller = Stanley(k=1.0, ks=0.5, kd=0, L=2.0,
                                    ld_long=1.5, ld_lat=0.25, scaling_factor=np.radians(50), max_speed=1.5, min_speed=1.0)
         
         self.long_controller = RiseTimeImprovement(kp=1.0, ki=0.0, kd=0.0, brake_gain=100)
@@ -93,31 +93,31 @@ class PathTracking():
         if self.gear == 2:
             self.controller.L = 1.3
         else:
-            self.controller.L = 0.7
+            self.controller.L = 2.0
 
+        if self.driving_mode == 'obstacle_avoiding':
+            self.controller.LD_lat = 0.0
+            
         target_steer, target_speed = self.controller.feedback(self.car_x, self.car_y, self.car_yaw, self.car_speed, self.path['x'], self.path['y'], self.path['yaw'], self.gear)
         print("원래 조향각: ", target_steer)
-    
-        if self.driving_mode == 'nomal_driving':
+
+        if self.driving_mode == 'normal_driving':
             # target_steer = target_steer* np.abs(self.tanh_scaling(target_steer,0.8))
-            target_steer *= 0.2
-            self.lpf.alpha = 0.3
+            target_steer *= 0.3
+        elif self.driving_mode == 'obstacle_avoiding':
+            target_steer *= 0.5
         elif self.driving_mode == 'intersect':
-            target_steer *= 0.4
-            self.lpf.alpha = 0.8
+            target_steer *= 0.5
         
         elif self.driving_mode == 'tunnel':
             target_steer *= 0.4
-            self.lpf.alpha = 0.3
 
         else:
             target_steer *= 0.8
-            self.lpf.alpha = 1
 
-        print("max:", self.controller.max_speed ,"min:",self.controller.min_speed)
-        # target_steer = np.radians(target_steer) # CARLA
+        # print("max:", self.controller.max_speed ,"min:",self.controller.min_speed)
         
-        target_steer = self.lpf.update(target_steer)
+        # target_steer = self.lpf.update(target_steer)
     
         if self.gear == 1:
             target_brake = 200

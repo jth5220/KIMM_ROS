@@ -18,7 +18,7 @@ from std_msgs.msg import String, Float32, Bool, Int8
 from tf.transformations import quaternion_from_euler
 
 TRAFFIC_DETECT_DIST = 20 # [m], 정지선으로부터 몇 m 이내에 들어와야 신호등 인식을 시작할지
-TRAFFIC_STOP_DIST = 6 # [m], 정지선으로부터 몇 m 이내에 들어와야 신호등을 통해 정지를 할지
+TRAFFIC_STOP_DIST = 10 # [m], 정지선으로부터 몇 m 이내에 들어와야 신호등을 통해 정지를 할지
 
 NEXT_WAY_DIST = 3 # [m], 현재 위치와 다음 way의 첫 번째 노드의 거리 => 다음 way로 넘어가는 기준
 
@@ -323,6 +323,7 @@ class GlobalPathPlanning():
 
         # Traffic detection 시작 여부 1: 신호 인식 필요 없는 곳은 return
         if self.traffic['target_sign'] == 'no_traffic':
+            self.traffic['status'] = 'finish'
             return 0
         
         if self.traffic['status'] == 'finish':
@@ -338,21 +339,18 @@ class GlobalPathPlanning():
             if self.stopwatch is None:
                 self.stopwatch = StopWatch()
                 self.stopwatch.start()
-
+        
             print('traffic_detected:', self.traffic['detected_sign'])
             print('target sign: ',self.traffic['target_sign'])
-            if self.traffic['target_sign'] == 'left' and ('Left' in self.traffic['detected_sign'] or
-                                                           'Straightleft' in self.traffic['detected_sign']): #'Straightleft'
+            if self.traffic['target_sign'] == 'left' and ('Left' in self.traffic['detected_sign']): #'Straightleft'
                 gear_override = 0
-                self.traffic['status'] = 'finish'
-
+                
             elif self.traffic['target_sign'] == 'right':
                 gear_override = 1
 
                 elapsed_time = self.stopwatch.update()
                 if elapsed_time > 1:
                     gear_override = 0
-                    self.traffic['status'] = 'finish'
 
             # elif self.traffic['target_sign'] == 'straight' and ('Green' in self.traffic['detected_sign'] or \
             #                                             'Straightleft' in self.traffic['detected_sign'] or \
@@ -360,7 +358,6 @@ class GlobalPathPlanning():
             elif self.traffic['target_sign'] == 'straight' and ('Green' in self.traffic['detected_sign'] or \
                                                         'Straightleft' in self.traffic['detected_sign']):
                 gear_override = 0
-                self.traffic['status'] = 'finish'
 
             else:
                 gear_override = 1

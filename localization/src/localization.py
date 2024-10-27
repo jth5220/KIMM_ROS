@@ -213,7 +213,7 @@ class Localization():
     def callback_imu(self,imu_msg):
         local_yaw = euler_from_quaternion([imu_msg.orientation.x, imu_msg.orientation.y,\
                                           imu_msg.orientation.z, imu_msg.orientation.w])[2]
-        global_yaw = local_yaw + self.yaw_offset
+        global_yaw = local_yaw + self.yaw_offset + np.radians(-1.4440643432812905)
         
         self.global_yaw = normalize_angle(global_yaw)
         self.location.pose.pose.orientation.x, self.location.pose.pose.orientation.y, \
