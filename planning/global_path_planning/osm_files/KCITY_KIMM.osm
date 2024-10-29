@@ -9875,6 +9875,7 @@
     <tag k='code' v='1' />
     <tag k='speed_max' v='10' />
     <tag k='speed_min' v='7' />
+    <tag k='traffic' v='left' />
   </way>
   <way id='-2788' action='modify' visible='true'>
     <nd ref='-34738' />
@@ -10178,6 +10179,7 @@
     <tag k='code' v='1' />
     <tag k='speed_max' v='10' />
     <tag k='speed_min' v='7' />
+    <tag k='traffic' v='left' />
   </way>
   <way id='-2794' action='modify' visible='true'>
     <nd ref='-34948' />
@@ -10244,7 +10246,6 @@
     <tag k='code' v='0' />
     <tag k='speed_max' v='10' />
     <tag k='speed_min' v='7' />
-    <tag k='traffic' v='left' />
   </way>
   <way id='-2796' action='modify' visible='true'>
     <nd ref='-34861' />
@@ -10275,7 +10276,6 @@
     <tag k='code' v='0' />
     <tag k='speed_max' v='10' />
     <tag k='speed_min' v='7' />
-    <tag k='traffic' v='left' />
   </way>
   <way id='-2797' action='modify' visible='true'>
     <nd ref='-34947' />
@@ -10462,7 +10462,6 @@
     <nd ref='-34781' />
     <nd ref='-35001' />
     <nd ref='-34724' />
-    <tag k='cluster_ROI' v='delivery_B' />
     <tag k='code' v='0' />
     <tag k='speed_max' v='10' />
     <tag k='speed_min' v='7' />
