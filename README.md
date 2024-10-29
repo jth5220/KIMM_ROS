@@ -10,7 +10,7 @@
 
    rm -rf ~/catkin_ws/src/*
 
-   rm -rf .git
+   rm -rf .git*
 
    git clone https://github.com/jth5220/KIMM_ROS .
 
