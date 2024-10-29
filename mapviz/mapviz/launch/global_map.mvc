@@ -1,0 +1,210 @@
+capture_directory: "~"
+fixed_frame: mapviz
+target_frame: <none>
+fix_orientation: false
+rotate_90: false
+enable_antialiasing: true
+show_displays: true
+show_status_bar: true
+show_capture_tools: true
+window_width: 1296
+window_height: 1016
+view_scale: 0.05730855
+offset_x: -29.41527
+offset_y: 55.81544
+background: "#eeeeec"
+displays:
+  - type: mapviz_plugins/tile_map
+    name: Satellite map
+    config:
+      visible: true
+      collapsed: true
+      custom_sources:
+        - base_url: https://xdworld.vworld.kr/2d/Satellite/service/{level}/{x}/{y}.jpeg
+          max_zoom: 19
+          name: VWorld
+          type: wmts
+        - base_url: http://localhost:8080/wmts/gm_layer/gm_grid/{level}/{x}/{y}.png
+          max_zoom: 19
+          name: google
+          type: wmts
+      bing_api_key: ""
+      source: VWorld
+  - type: mapviz_plugins/navsat
+    name: GPS raw data
+    config:
+      visible: false
+      collapsed: true
+      topic: /ublox_gps/fix
+      color: "#ef2929"
+      draw_style: lines
+      use_latest_transforms: true
+      position_tolerance: 1
+      buffer_size: 0
+  - type: mapviz_plugins/point_click_publisher
+    name: Global path planning by mouse point clicks
+    config:
+      visible: true
+      collapsed: true
+      topic: /clicked_point
+      output_frame: /wgs84
+  - type: mapviz_plugins/pose_array
+    name: All ways
+    config:
+      visible: true
+      collapsed: true
+      topic: /ways
+      color: "#eeeeec"
+      draw_style: arrows
+      position_tolerance: 1
+      static_arrow_sizes: false
+      arrow_size: 41
+  - type: mapviz_plugins/pose_array
+    name: Selected ways
+    config:
+      visible: true
+      collapsed: true
+      topic: /selected_ways
+      color: "#888a85"
+      draw_style: points
+      position_tolerance: 0
+      static_arrow_sizes: false
+      arrow_size: 16
+  - type: mapviz_plugins/pose_array
+    name: Current way
+    config:
+      visible: false
+      collapsed: true
+      topic: /closest_way
+      color: "#1f77ff"
+      draw_style: points
+      position_tolerance: 2
+      static_arrow_sizes: false
+      arrow_size: 65
+  - type: mapviz_plugins/pose_array
+    name: Candidate ways
+    config:
+      visible: false
+      collapsed: true
+      topic: /candidates_ways
+      color: "#00ffe0"
+      draw_style: arrows
+      position_tolerance: 0
+      static_arrow_sizes: false
+      arrow_size: 34
+  - type: mapviz_plugins/marker
+    name: Mission areas and types
+    config:
+      visible: true
+      collapsed: true
+      topic: /mission_areas
+  - type: mapviz_plugins/marker
+    name: stopline
+    config:
+      visible: true
+      collapsed: true
+      topic: /stoplines
+  - type: mapviz_plugins/pose_publisher
+    name: Initial global pose publisher
+    config:
+      visible: true
+      collapsed: false
+      topic: /initial_global_pose
+      output_frame: utm
+  - type: mapviz_plugins/odometry
+    name: location_not_corrected
+    config:
+      visible: false
+      collapsed: true
+      topic: /location_not_corrected
+      color: "#4e9a06"
+      draw_style: points
+      position_tolerance: 0
+      buffer_size: 0
+      show_laps: false
+      show_covariance: false
+      show_all_covariances: false
+      static_arrow_sizes: false
+      arrow_size: 22
+      use_latest_transforms: true
+      show_timestamps: 0
+  - type: mapviz_plugins/odometry
+    name: location_long_corrected
+    config:
+      visible: false
+      collapsed: true
+      topic: /location_long_corrected
+      color: "#204a87"
+      draw_style: points
+      position_tolerance: 0
+      buffer_size: 0
+      show_laps: false
+      show_covariance: false
+      show_all_covariances: false
+      static_arrow_sizes: false
+      arrow_size: 16
+      use_latest_transforms: true
+      show_timestamps: 0
+  - type: mapviz_plugins/odometry
+    name: location_corrected
+    config:
+      visible: true
+      collapsed: false
+      topic: /location_corrected
+      color: "#00ff00"
+      draw_style: arrows
+      position_tolerance: 2
+      buffer_size: 0
+      show_laps: false
+      show_covariance: false
+      show_all_covariances: false
+      static_arrow_sizes: false
+      arrow_size: 24
+      use_latest_transforms: true
+      show_timestamps: 0
+  - type: mapviz_plugins/path
+    name: new display
+    config:
+      visible: true
+      collapsed: true
+      topic: /local_path
+      color: "#ef2929"
+  - type: mapviz_plugins/pose_array
+    name: new display
+    config:
+      visible: true
+      collapsed: true
+      topic: /obstacles_utm
+      color: "#fce94f"
+      draw_style: points
+      position_tolerance: 0
+      static_arrow_sizes: false
+      arrow_size: 25
+  - type: mapviz_plugins/image
+    name: new display
+    config:
+      visible: true
+      collapsed: true
+      topic: /lane_img
+      anchor: top left
+      units: pixels
+      offset_x: 0
+      offset_y: 0
+      width: 320
+      height: 240
+      keep_ratio: false
+      image_transport: default
+  - type: mapviz_plugins/image
+    name: new display
+    config:
+      visible: true
+      collapsed: true
+      topic: /stopline_img
+      anchor: center left
+      units: pixels
+      offset_x: 0
+      offset_y: 0
+      width: 320
+      height: 240
+      keep_ratio: false
+      image_transport: default
