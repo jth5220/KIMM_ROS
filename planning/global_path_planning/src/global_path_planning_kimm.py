@@ -52,8 +52,7 @@ rospack = rospkg.RosPack()
 OSM_FILE_PATH = rospack.get_path('global_path_planning') + "/osm_files"
 # OSM_FILE_LIST = ["hitech_LINK.osm", "hitech_INTERSECTION_LINK.osm", "hitech2_STOPLINE.osm"]
 # OSM_FILE_LIST = ["KCITY_MAIN_KIMM.osm"]
-OSM_FILE_LIST = ['KCITY_MAIN_KIMM.osm', 
-                 'KCITY_STOPLINE_v3b.osm']
+OSM_FILE_LIST = ['KCITY_KIMM.osm']
 
 class GlobalPathPlanning():
     def __init__(self):
@@ -84,7 +83,8 @@ class GlobalPathPlanning():
                         'path':None,
                         'cluster_ROI':None,
                         'speed_max':2.5,
-                        'speed_min':2.0}
+                        'speed_min':2.0,
+                        'end_point':None}
 
         # traffic light
         self.traffic = {'status':None, 'detected_sign':[], 'target_sign':None}
@@ -103,7 +103,7 @@ class GlobalPathPlanning():
         self.ways = osmhandler.ways # {way1: [node1, node2, ...], way2:[node11,node12,...]}
         self.way_nodes = osmhandler.way_nodes # {node1:[x1,y1], node2:[x2,y2], ... }
         self.ways_info = osmhandler.ways_info
-        print(self.ways_info)
+        # print(self.ways_info)
         self.mission_way = {}
 
         self.mission = osmhandler.mission_areas
@@ -188,7 +188,14 @@ class GlobalPathPlanning():
 
             # traffic
             self.traffic['status'] = None
-            self.traffic['target_sign'] = self.ways_info['traffic'][self.cur_way['id']]
+
+            try:
+                next_way_id = self.way_selector.selected_ways[self.cur_way['idx']+1]
+                self.traffic['target_sign'] = self.ways_info['traffic'][next_way_id]
+            except:
+                self.traffic['target_sign'] = 'no_traffic'
+
+            # self.traffic['target_sign'] = self.ways_info['traffic'][self.cur_way['id']]
             self.stopwatch = None
 
             self.cur_way['waypoints'] = self.get_waypoints()
@@ -209,7 +216,10 @@ class GlobalPathPlanning():
         _, min_dist_stopline = self.update_stopline_dist(self.location)
         
         # 신호등 체크
-        gear_override = self.update_traffic(min_dist_stopline) 
+        dist_cur_way_end = euclidean_distance(self.cur_way['end_point'], self.location)
+        # np.sqrt((self.cur_way['end_point'][0]-self.location[0])**2 + (self.cur_way['end_point'][1]-self.location[1])**2)
+        # print(self.cur_way['end_point'])
+        gear_override = self.update_traffic(dist_cur_way_end) 
 
         # near_ waypoints
         near_waypoints, _ = self.get_near_waypoints()
@@ -242,7 +252,7 @@ class GlobalPathPlanning():
     
     def update_stopline_dist(self, car_position):
         stopline_id = self.stopline_way.get(self.cur_way['id'], None)
-        print("정지선:", stopline_id)
+        # print("정지선:", stopline_id)
         if stopline_id is None:
             return None, np.inf
         
@@ -344,13 +354,15 @@ class GlobalPathPlanning():
             print('target sign: ',self.traffic['target_sign'])
             if self.traffic['target_sign'] == 'left' and ('Left' in self.traffic['detected_sign']): #'Straightleft'
                 gear_override = 0
-                
+                self.traffic['status'] = 'finish'
+
             elif self.traffic['target_sign'] == 'right':
                 gear_override = 1
 
                 elapsed_time = self.stopwatch.update()
-                if elapsed_time > 1:
+                if elapsed_time > 3:
                     gear_override = 0
+                    self.traffic['status'] = 'finish'
 
             # elif self.traffic['target_sign'] == 'straight' and ('Green' in self.traffic['detected_sign'] or \
             #                                             'Straightleft' in self.traffic['detected_sign'] or \
@@ -358,6 +370,7 @@ class GlobalPathPlanning():
             elif self.traffic['target_sign'] == 'straight' and ('Green' in self.traffic['detected_sign'] or \
                                                         'Straightleft' in self.traffic['detected_sign']):
                 gear_override = 0
+                self.traffic['status'] = 'finish'
 
             else:
                 gear_override = 1
@@ -373,6 +386,9 @@ class GlobalPathPlanning():
         # near_ways = self.way_selector.selected_ways[start_index:end_index + 1] # 인근한 3개의 way 추출
         
         cur_waypoints = [self.way_nodes[node_id] for node_id in self.ways[self.cur_way['id']]]
+
+        self.cur_way['end_point'] = cur_waypoints[-3]
+
         if self.cur_way['idx'] == 0:
             print("1")
             if len(self.way_selector.selected_ways) == 1:
